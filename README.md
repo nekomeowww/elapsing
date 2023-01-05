@@ -9,12 +9,12 @@ A simple Golang library for measuring elapsed time in application, function call
 
 ## Features
 
+- Easy to use
+- Pretty output with colors into terminal
 - Able to measure elapsed time for individual steps
 - Able to measure elapsed time for function calls
 - Able to measure elapsed time for goroutines
 - Concurrent safe
-- Easy to use
-- Pretty output with colors into terminal
 
 ## Install
 
@@ -44,7 +44,7 @@ func main() {
 }
 ```
 
-If you would like to measure the elapsed time of a function call, you can use `elapsing.ForFunc()` to get a new `FuncCall` instance:
+If you would like to measure the elapsed time of a function call, you can use `elapsing.ForFunc()` to get a new `FuncCall` instance to measure individually:
 
 ```go
 package main
@@ -76,7 +76,7 @@ func main() {
 
 ## Example
 
-Here's some example code:
+Here's some example codes:
 
 ```go
 func Func1(elapsingFunc *FuncCall) {
@@ -120,7 +120,7 @@ func TestStats(t *testing.T) {
 }
 ```
 
-It will outputs the following result with colors:
+It will output the following result with colors:
 
 ```shell
 ── elapsing.TestStats
