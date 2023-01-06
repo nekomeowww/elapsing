@@ -150,14 +150,14 @@ It will output the following result with colors:
 
 ```shell
 ── elapsing.TestStats
-   ├─ #1 Step 1 [ 51.164875ms (51.164875ms total)]
-   ├─ #2 elapsing.Func1
-   │  ├─ #1 Func1 step 1 [   51.1435ms ( 51.1435ms total)]
-   │  ├─ #2 elapsing.Func2
-   │  │  ├─ #1 Func2 step 1 [51.094625ms ( 51.094625ms total)]
-   │  │  └─ #2 Func2 step 2 [51.302833ms (102.397458ms total)]
-   │  └─ #3 Func1 step 2 [152.680417ms (203.8375ms total)]
-   └─ #3 Step 3 [254.866125ms (  306.036ms total)]
+   ├─ #1 Step 0 [50.290209ms ( 50.290209ms total)]
+   ├─ #2 elapsing.func1
+   │  ├─ #1 Func1 step 1 [51.041583ms ( 51.041583ms total)]
+   │  ├─ #2 elapsing.func2
+   │  │  ├─ #1 Func2 step 1 [51.119917ms ( 51.119917ms total)]
+   │  │  └─ #2 Func2 step 2 [51.095666ms (102.215583ms total)]
+   │  └─ #3 Func1 step 2 [51.070458ms (204.339041ms total)]
+   └─ #3 Step 2 [51.074333ms (305.816375ms total)]
 ```
 
 Screenshot with colors:
