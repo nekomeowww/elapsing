@@ -1,12 +1,16 @@
 package elapsing
 
 import (
+	"time"
+
 	"github.com/nekomeowww/elapsing/internal/utils"
 	"github.com/samber/lo"
 )
 
 type FuncCall struct {
 	*Elapsing
+
+	parent *Elapsing
 }
 
 func (e *Elapsing) ForFunc() *FuncCall {
@@ -15,6 +19,7 @@ func (e *Elapsing) ForFunc() *FuncCall {
 
 	fc := &FuncCall{
 		Elapsing: empty(),
+		parent:   e,
 	}
 
 	fc.Elapsing.elapsingType = elapsingTypeFunc
@@ -43,4 +48,9 @@ func (f *FuncCall) Return() {
 	if f.name == "" {
 		f.obtainFunctionName()
 	}
+
+	f.parent.stepsLock.Lock()
+	defer f.parent.stepsLock.Unlock()
+
+	f.parent.lastStepOn = time.Now()
 }
