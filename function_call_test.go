@@ -9,11 +9,11 @@ import (
 func TestForFunc(t *testing.T) {
 	assert := assert.New(t)
 
-	e := Empty()
+	e := empty()
 	fc := e.ForFunc()
-	assert.Equal(ElapsingTypeFunc, fc.ElapsingType)
-	assert.Equal(1, len(e.Steps))
-	assert.Equal(fc.Elapsing, e.Steps[0])
+	assert.Equal(elapsingTypeFunc, fc.elapsingType)
+	assert.Equal(1, len(e.steps))
+	assert.Equal(fc.Elapsing, e.steps[0])
 }
 
 func testObtainFunctionName(fc *FuncCall) {
@@ -23,30 +23,30 @@ func testObtainFunctionName(fc *FuncCall) {
 func TestObtainFunctionName(t *testing.T) {
 	assert := assert.New(t)
 	fc := &FuncCall{
-		Elapsing: Empty(),
+		Elapsing: empty(),
 	}
 
 	testObtainFunctionName(fc)
-	assert.Equal("elapsing.TestObtainFunctionName", fc.Name)
+	assert.Equal("elapsing.TestObtainFunctionName", fc.name)
 }
 
 func TestStepEnds(t *testing.T) {
 	assert := assert.New(t)
 
-	e := Empty()
+	e := empty()
 	fc := e.ForFunc()
 	fc.StepEnds()
-	assert.Equal(1, len(fc.Steps))
-	assert.Equal(1, len(e.Steps))
-	assert.Equal("elapsing.TestStepEnds", fc.Name)
+	assert.Equal(1, len(fc.steps))
+	assert.Equal(1, len(e.steps))
+	assert.Equal("elapsing.TestStepEnds", fc.name)
 }
 
 func TestReturn(t *testing.T) {
 	assert := assert.New(t)
 
-	e := Empty()
+	e := empty()
 	fc := e.ForFunc()
 	fc.Return()
-	assert.Empty(fc.Steps)
-	assert.Equal("elapsing.TestReturn", fc.Name)
+	assert.Empty(fc.steps)
+	assert.Equal("elapsing.TestReturn", fc.name)
 }

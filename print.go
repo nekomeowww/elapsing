@@ -6,7 +6,7 @@ import (
 
 	"github.com/gookit/color"
 	"github.com/jedib0t/go-pretty/v6/list"
-	"github.com/nekomeowww/elapsing/pkg/utils"
+	"github.com/nekomeowww/elapsing/internal/utils"
 	"github.com/samber/lo"
 )
 
@@ -19,9 +19,13 @@ func alterRenderResultWithColor(renderResult string, style *list.Style, color co
 	return renderResult
 }
 
+const (
+	defaultSingleLineFormat = "%%s %%s %s%%v %s%%v %s%s%s"
+)
+
 var (
 	// format of [%s ( %s total)]
-	singleLineFormat = fmt.Sprintf("%%s %%s %s%%v %s%%v %s%s%s",
+	singleLineFormat = fmt.Sprintf(defaultSingleLineFormat,
 		color.FgGray.Render("["),
 		color.FgGray.Render("("),
 		color.FgGray.Render("total"),
@@ -33,27 +37,27 @@ var (
 func (e *Elapsing) appendStatsDataToList(list list.Writer, parentIndex int) {
 	var name string
 
-	switch e.ElapsingType {
-	case ElapsingTypeBase:
-		name = color.FgCyan.Render(lo.Ternary(e.Name == "", "(unknown name)", e.Name))
-	case ElapsingTypeFunc:
+	switch e.elapsingType {
+	case elapsingTypeBase:
+		name = color.FgCyan.Render(lo.Ternary(e.name == "", defaultUnknownName, e.name))
+	case elapsingTypeFunc:
 		name = fmt.Sprintf("%s %s",
 			color.FgGray.Render(fmt.Sprintf("#%d", parentIndex+1)),
-			color.FgCyan.Render(lo.Ternary(e.Name == "", "(unknown function name)", e.Name)),
+			color.FgCyan.Render(lo.Ternary(e.name == "", defaultUnknownFunctionName, e.name)),
 		)
 	}
 
 	list.AppendItem(name)
 	list.Indent()
 
-	indexes, indexesMaxLength := e.Steps.Indexes()
-	names, namesMaxLength := e.Steps.Names()
-	lasts, lastsMaxLength := e.Steps.Lasts()
-	totals, totalsMaxLength := e.Steps.Totals()
+	indexes, indexesMaxLength := e.steps.Indexes()
+	names, namesMaxLength := e.steps.Names()
+	lasts, lastsMaxLength := e.steps.Lasts()
+	totals, totalsMaxLength := e.steps.Totals()
 
 	lo.ForEach(indexes, func(_ string, i int) {
-		if e.Steps[i].Type() == StepTypeElapsing {
-			e.Steps[i].(*Elapsing).appendStatsDataToList(list, i)
+		if e.steps[i].Type() == StepTypeElapsing {
+			e.steps[i].(*Elapsing).appendStatsDataToList(list, i)
 			return
 		}
 

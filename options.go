@@ -7,36 +7,41 @@ type stepOptions struct {
 	on   time.Time
 }
 
-// StepCallOption
-type StepCallOption struct {
-	applyFunc func(opt *stepOptions)
+var (
+	defaultOptions = stepOptions{}
+)
+
+// StepCallOptions
+type StepCallOptions struct {
+	Name string
+	On   time.Time
 }
 
-func applyOptions(callOptions []StepCallOption) *stepOptions {
+func applyOptions(callOptions []StepCallOptions) stepOptions {
 	if len(callOptions) == 0 {
-		return &stepOptions{}
+		return defaultOptions
 	}
 
-	optCopy := &stepOptions{}
-	for _, f := range callOptions {
-		f.applyFunc(optCopy)
+	opts := callOptions[0]
+	optCopy := defaultOptions
+	if opts.Name != "" {
+		optCopy.name = opts.Name
+	}
+	if !opts.On.IsZero() {
+		optCopy.on = opts.On
 	}
 
 	return optCopy
 }
 
-func WithName(name string) StepCallOption {
-	return StepCallOption{
-		applyFunc: func(opt *stepOptions) {
-			opt.name = name
-		},
+func WithName(name string) StepCallOptions {
+	return StepCallOptions{
+		Name: name,
 	}
 }
 
-func WithTime(t time.Time) StepCallOption {
-	return StepCallOption{
-		applyFunc: func(opt *stepOptions) {
-			opt.on = t
-		},
+func WithTime(t time.Time) StepCallOptions {
+	return StepCallOptions{
+		On: t,
 	}
 }

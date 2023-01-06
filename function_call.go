@@ -1,7 +1,7 @@
 package elapsing
 
 import (
-	"github.com/nekomeowww/elapsing/pkg/utils"
+	"github.com/nekomeowww/elapsing/internal/utils"
 	"github.com/samber/lo"
 )
 
@@ -14,22 +14,25 @@ func (e *Elapsing) ForFunc() *FuncCall {
 	defer e.stepsLock.Unlock()
 
 	fc := &FuncCall{
-		Elapsing: Empty(),
+		Elapsing: empty(),
 	}
 
-	fc.Elapsing.ElapsingType = ElapsingTypeFunc
-	e.Steps = append(e.Steps, fc.Elapsing)
+	fc.Elapsing.elapsingType = elapsingTypeFunc
+
+	e.lastStepOn = fc.on
+	e.lastStepIndex += 1
+	e.steps = append(e.steps, fc.Elapsing)
 	return fc
 }
 
 func (f *FuncCall) obtainFunctionName() {
 	functionName := utils.FunctionNameOfCaller(3)
 	functionName = lo.Ternary(functionName == "", "(unknown function name)", functionName)
-	f.Name = functionName
+	f.name = functionName
 }
 
-func (f *FuncCall) StepEnds(callOpts ...StepCallOption) {
-	if f.Name == "" {
+func (f *FuncCall) StepEnds(callOpts ...StepCallOptions) {
+	if f.name == "" {
 		f.obtainFunctionName()
 	}
 
@@ -37,7 +40,7 @@ func (f *FuncCall) StepEnds(callOpts ...StepCallOption) {
 }
 
 func (f *FuncCall) Return() {
-	if f.Name == "" {
+	if f.name == "" {
 		f.obtainFunctionName()
 	}
 }

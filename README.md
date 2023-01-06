@@ -74,24 +74,50 @@ func main() {
 }
 ```
 
+## Performance
+
+Benchmark result as below.
+
+### Benchmark on MacBook Pro (14-inches, M1 Pro, 2022)
+
+```text
+goos: darwin
+goarch: arm64
+pkg: github.com/nekomeowww/elapsing
+BenchmarkStepEnds
+BenchmarkStepEnds-10                     7178438        177.1 ns/op      180 B/op        2 allocs/op
+BenchmarkStepEndsWithName
+BenchmarkStepEndsWithName-10            11180500        122.8 ns/op      156 B/op        1 allocs/op
+BenchmarkStepEndsWithTime
+BenchmarkStepEndsWithTime-10             8067342        150.5 ns/op      169 B/op        2 allocs/op
+BenchmarkForFunc
+BenchmarkForFunc-10                       495000         4119 ns/op    16858 B/op        6 allocs/op
+BenchmarkForFuncStepEnds
+BenchmarkForFuncStepEnds-10              6566698        164.5 ns/op      168 B/op        2 allocs/op
+BenchmarkForFuncStepEndsWithName
+BenchmarkForFuncStepEndsWithName-10     10403928        113.7 ns/op      163 B/op        1 allocs/op
+BenchmarkForFuncStepEndsWithTime
+BenchmarkForFuncStepEndsWithTime-10      7167212        170.7 ns/op      180 B/op        2 allocs/op
+```
+
 ## Example
 
 Here's some example codes:
 
 ```go
-func Func1(elapsingFunc *FuncCall) {
+func func1(elapsingFunc *FuncCall) {
     defer elapsingFunc.Return()
 
     time.Sleep(50 * time.Millisecond)
     elapsingFunc.StepEnds(WithName("Func1 step 1"))
 
-    Func2(elapsingFunc.ForFunc())
+    func2(elapsingFunc.ForFunc())
 
- time.Sleep(50 * time.Millisecond)
- elapsingFunc.StepEnds(WithName("Func1 step 2"))
+    time.Sleep(50 * time.Millisecond)
+    elapsingFunc.StepEnds(WithName("Func1 step 2"))
 }
 
-func Func2(elapsingFunc *FuncCall) {
+func func2(elapsingFunc *FuncCall) {
     defer elapsingFunc.Return()
 
     time.Sleep(50 * time.Millisecond)
@@ -109,7 +135,7 @@ func TestStats(t *testing.T) {
     time.Sleep(50 * time.Millisecond)
     elapsing.StepEnds()
 
-    Func1(elapsing.ForFunc())
+    func1(elapsing.ForFunc())
 
     time.Sleep(50 * time.Millisecond)
     elapsing.StepEnds()
@@ -136,4 +162,4 @@ It will output the following result with colors:
 
 Screenshot with colors:
 
-![](https://raw.githubusercontent.com/nekomeowww/elapsing/main/docs/screenshots-01.png)
+![screenshot with colors](https://raw.githubusercontent.com/nekomeowww/elapsing/main/docs/screenshots-01.png)

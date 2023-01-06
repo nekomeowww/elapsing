@@ -4,18 +4,17 @@ import (
 	"time"
 )
 
-type Point struct {
-	Name         string
-	SinceInitial time.Duration
-	SinceLast    time.Duration
-
-	on time.Time
+type point struct {
+	name         string
+	on           time.Time
+	sinceInitial time.Duration
+	sinceLast    time.Duration
 }
 
-func (p Point) Type() StepType {
+func (p point) Type() StepType {
 	return StepTypePoint
 }
 
-func (p Point) On() time.Time {
+func (p point) On() time.Time {
 	return p.on
 }

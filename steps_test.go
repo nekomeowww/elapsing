@@ -11,14 +11,14 @@ import (
 func TestIndexes(t *testing.T) {
 	assert := assert.New(t)
 
-	emptyStep := Steps{}
+	emptyStep := steps{}
 	indexes, maxLength := emptyStep.Indexes()
 	assert.Empty(indexes)
 	assert.Zero(maxLength)
 
-	step := Steps{
-		Point{},
-		Point{},
+	step := steps{
+		point{},
+		point{},
 		&Elapsing{},
 	}
 
@@ -28,9 +28,9 @@ func TestIndexes(t *testing.T) {
 	assert.ElementsMatch([]string{"1", "2", "3"}, indexes)
 
 	expectedIndexes := make([]string, 100)
-	aLotOfSteps := Steps{}
+	aLotOfSteps := steps{}
 	for i := 0; i < 100; i++ {
-		aLotOfSteps = append(aLotOfSteps, &Point{})
+		aLotOfSteps = append(aLotOfSteps, &point{})
 		expectedIndexes[i] = strconv.FormatInt(int64(i+1), 10)
 	}
 
@@ -43,15 +43,15 @@ func TestIndexes(t *testing.T) {
 func TestNames(t *testing.T) {
 	assert := assert.New(t)
 
-	emptyStep := Steps{}
+	emptyStep := steps{}
 	names, maxLength := emptyStep.Names()
 	assert.Empty(names)
 	assert.Zero(maxLength)
 
-	step := Steps{
-		Point{Name: "A"},
-		Point{Name: "B"},
-		&Elapsing{Name: "C"},
+	step := steps{
+		point{name: "A"},
+		point{name: "B"},
+		&Elapsing{name: "C"},
 	}
 
 	names, maxLength = step.Names()
@@ -63,7 +63,7 @@ func TestNames(t *testing.T) {
 func TestLasts(t *testing.T) {
 	assert := assert.New(t)
 
-	emptyStep := Steps{}
+	emptyStep := steps{}
 	lasts, maxLength := emptyStep.Lasts()
 	assert.Empty(lasts)
 	assert.Zero(maxLength)
@@ -73,10 +73,10 @@ func TestLasts(t *testing.T) {
 	last1 := time.Now().Add(time.Second).Sub(on)
 	last2 := time.Now().Add(2 * time.Second).Sub(on)
 
-	step := Steps{
-		Point{Name: "A", SinceLast: last1},
-		Point{Name: "B", SinceLast: last2},
-		&Elapsing{Name: "C"},
+	step := steps{
+		point{name: "A", sinceLast: last1},
+		point{name: "B", sinceLast: last2},
+		&Elapsing{name: "C"},
 	}
 
 	lasts, maxLength = step.Lasts()
@@ -88,7 +88,7 @@ func TestLasts(t *testing.T) {
 func TestTotals(t *testing.T) {
 	assert := assert.New(t)
 
-	emptyStep := Steps{}
+	emptyStep := steps{}
 	totals, maxLength := emptyStep.Totals()
 	assert.Empty(totals)
 	assert.Zero(maxLength)
@@ -98,10 +98,10 @@ func TestTotals(t *testing.T) {
 	total1 := time.Now().Add(time.Second).Sub(on)
 	total2 := time.Now().Add(2 * time.Second).Sub(on)
 
-	step := Steps{
-		Point{Name: "A", SinceInitial: total1},
-		Point{Name: "B", SinceInitial: total2},
-		&Elapsing{Name: "C"},
+	step := steps{
+		point{name: "A", sinceInitial: total1},
+		point{name: "B", sinceInitial: total2},
+		&Elapsing{name: "C"},
 	}
 
 	totals, maxLength = step.Totals()

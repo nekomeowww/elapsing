@@ -1,29 +1,37 @@
 package elapsing
 
 import (
-	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/samber/lo"
 
-	"github.com/nekomeowww/elapsing/pkg/utils"
+	"github.com/nekomeowww/elapsing/internal/utils"
 )
 
-type ElapsingType int
+const (
+	defaultPointNamePrefix     = "Step "
+	defaultUnknownName         = "(unknown name)"
+	defaultUnknownFunctionName = "(unknown function name)"
+)
+
+type elapsingType int
 
 const (
-	_                ElapsingType = iota
-	ElapsingTypeBase              // Elapsing of base
-	ElapsingTypeFunc              // Elapsing for a function
+	_                elapsingType = iota
+	elapsingTypeBase              // Elapsing of base
+	elapsingTypeFunc              // Elapsing for a function
 )
 
 type Elapsing struct {
-	Name         string
-	Steps        Steps
-	ElapsingType ElapsingType
+	name         string
+	steps        steps
+	elapsingType elapsingType
 
-	on time.Time
+	on            time.Time
+	lastStepOn    time.Time
+	lastStepIndex int64
 
 	stepsLock sync.Mutex
 }
@@ -38,18 +46,19 @@ func (e *Elapsing) On() time.Time {
 
 // New creates a new elapsing with the name of the caller function
 func New() *Elapsing {
-	e := Empty()
-	e.Name = utils.FunctionNameOfCaller(2)
-	e.Name = lo.Ternary(e.Name == "", "(unknown name)", e.Name)
+	e := empty()
+	e.name = utils.FunctionNameOfCaller(2)
+	e.name = lo.Ternary(e.name == "", defaultUnknownName, e.name)
 	return e
 }
 
-// Empty creates a new empty elapsing, the only difference with New is that
+// empty creates a new empty elapsing, the only difference with New is that
 // the name of the elapsing is empty
-func Empty() *Elapsing {
+func empty() *Elapsing {
 	return &Elapsing{
 		on:           time.Now(),
-		ElapsingType: ElapsingTypeBase,
+		elapsingType: elapsingTypeBase,
+		steps:        make(steps, 0, 1024),
 	}
 }
 
@@ -57,33 +66,28 @@ func (e *Elapsing) newStepEnds(name string, on time.Time) {
 	e.stepsLock.Lock()
 	defer e.stepsLock.Unlock()
 
-	// create a new point to store the step name and time infos
-	point := Point{
-		Name:         name,
+	point := point{
+		name:         name,
 		on:           on,
-		SinceInitial: on.Sub(e.on),
+		sinceInitial: on.Sub(e.on),
 	}
-	if len(e.Steps) > 0 {
-		// calculate the time elapsed since the last step
-		point.SinceLast = on.Sub(e.Steps[len(e.Steps)-1].On())
+	if len(e.steps) > 0 {
+		point.sinceLast = on.Sub(e.lastStepOn)
 	} else {
-		// calculate the time elapsed since the initial elapsing time
-		point.SinceLast = on.Sub(e.on)
+		point.sinceLast = point.sinceInitial
 	}
 
-	e.Steps = append(e.Steps, point)
+	e.lastStepOn = on
+	e.lastStepIndex += 1
+	e.steps = append(e.steps, point)
 }
 
 // StepEnds adds a new step to the elapsing.
-func (e *Elapsing) StepEnds(callOpts ...StepCallOption) {
-	// apply the options
+func (e *Elapsing) StepEnds(callOpts ...StepCallOptions) {
 	opts := applyOptions(callOpts)
-
-	// if the name is empty, create a default name
 	if opts.name == "" {
-		opts.name = fmt.Sprintf("Step %d", len(e.Steps)+1)
+		opts.name = defaultPointNamePrefix + strconv.FormatInt(e.lastStepIndex, 10)
 	}
-	// if the time is zero, use the current time
 	if opts.on.IsZero() {
 		opts.on = time.Now()
 	}

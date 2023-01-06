@@ -12,12 +12,12 @@ func TestPoint(t *testing.T) {
 
 	on := time.Now()
 
-	p := &Point{
-		Name: "ABCD",
+	p := &point{
+		name: "ABCD",
 		on:   on,
 	}
 
-	assert.Equal("ABCD", p.Name)
+	assert.Equal("ABCD", p.name)
 	assert.Equal(StepTypePoint, p.Type())
 	assert.Equal(on, p.On())
 }
