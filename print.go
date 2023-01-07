@@ -10,7 +10,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func alterRenderResultWithColor(renderResult string, style *list.Style, color color.Color) string {
+func alterRenderedResultWithColor(renderResult string, style *list.Style, color color.Color) string {
 	renderResult = strings.ReplaceAll(renderResult, style.CharItemSingle, color.Render(style.CharItemSingle))
 	renderResult = strings.ReplaceAll(renderResult, style.CharItemTop, color.Render(style.CharItemTop))
 	renderResult = strings.ReplaceAll(renderResult, style.CharItemMiddle, color.Render(style.CharItemMiddle))
@@ -55,10 +55,10 @@ func (e *Elapsing) appendStatsDataToList(list list.Writer, parentIndex int) {
 	lasts, lastsMaxLength := e.steps.Lasts()
 	totals, totalsMaxLength := e.steps.Totals()
 
-	lo.ForEach(indexes, func(_ string, i int) {
+	for i := range indexes {
 		if e.steps[i].Type() == StepTypeElapsing {
 			e.steps[i].(*Elapsing).appendStatsDataToList(list, i)
-			return
+			continue
 		}
 
 		list.AppendItem(fmt.Sprintf(singleLineFormat,
@@ -67,7 +67,7 @@ func (e *Elapsing) appendStatsDataToList(list list.Writer, parentIndex int) {
 			color.FgGreen.Render(utils.StringPadStart(lasts[i], lastsMaxLength)),
 			color.FgGray.Render(utils.StringPadStart(totals[i], totalsMaxLength)),
 		))
-	})
+	}
 
 	list.UnIndent()
 }
@@ -81,5 +81,5 @@ func (e *Elapsing) Stats() string {
 	e.appendStatsDataToList(newList, 0)
 
 	renderResult := newList.Render()
-	return alterRenderResultWithColor(renderResult, newList.Style(), color.FgGray)
+	return alterRenderedResultWithColor(renderResult, newList.Style(), color.FgGray)
 }
