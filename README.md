@@ -74,6 +74,28 @@ func main() {
 }
 ```
 
+## Examples
+
+### Example 1 [[Try it]](https://go.dev/play/p/gpZziPOabFI)
+
+Example 1 contains the use of `elapsing.ForFunc()` to measure the elapsed time of a function call.
+
+It will output the following result with colors:
+
+![screenshot with colors](https://raw.githubusercontent.com/nekomeowww/elapsing/main/docs/screenshots-01.png)
+
+[[Source Code: cmd/examples/example1]](https://github.com/nekomeowww/elapsing/tree/main/cmd/examples/example1)
+
+### Example 2 [[Try it]](https://go.dev/play/p/Cbpxdnc-q-m)
+
+Example 2 contains the use of CJK names and the output will auto padding the spaces to make the output looks better.
+
+It will output the following result with colors:
+
+![screenshot with colors](https://raw.githubusercontent.com/nekomeowww/elapsing/main/docs/screenshots-02.png)
+
+[[Source Code: cmd/examples/example2]](https://github.com/nekomeowww/elapsing/tree/main/cmd/examples/example2)
+
 ## Performance
 
 Benchmark result as below.
@@ -99,67 +121,3 @@ BenchmarkForFuncStepEndsWithName-10     10403928        113.7 ns/op      163 B/o
 BenchmarkForFuncStepEndsWithTime
 BenchmarkForFuncStepEndsWithTime-10      7167212        170.7 ns/op      180 B/op        2 allocs/op
 ```
-
-## Example
-
-Here's some example codes:
-
-```go
-func func1(elapsingFunc *FuncCall) {
-    defer elapsingFunc.Return()
-
-    time.Sleep(50 * time.Millisecond)
-    elapsingFunc.StepEnds(WithName("Func1 step 1"))
-
-    func2(elapsingFunc.ForFunc())
-
-    time.Sleep(50 * time.Millisecond)
-    elapsingFunc.StepEnds(WithName("Func1 step 2"))
-}
-
-func func2(elapsingFunc *FuncCall) {
-    defer elapsingFunc.Return()
-
-    time.Sleep(50 * time.Millisecond)
-    elapsingFunc.StepEnds(WithName("Func2 step 1"))
-
-    time.Sleep(50 * time.Millisecond)
-    elapsingFunc.StepEnds(WithName("Func2 step 2"))
-}
-
-func TestStats(t *testing.T) {
-    require := require.New(t)
-
-    elapsing := New()
-
-    time.Sleep(50 * time.Millisecond)
-    elapsing.StepEnds()
-
-    func1(elapsing.ForFunc())
-
-    time.Sleep(50 * time.Millisecond)
-    elapsing.StepEnds()
-
-    require.NotPanics(func() {
-        fmt.Println(elapsing.Stats())
-    })
-}
-```
-
-It will output the following result with colors:
-
-```shell
-── elapsing.TestStats
-   ├─ #1 Step 0 [50.290209ms ( 50.290209ms total)]
-   ├─ #2 elapsing.func1
-   │  ├─ #1 Func1 step 1 [51.041583ms ( 51.041583ms total)]
-   │  ├─ #2 elapsing.func2
-   │  │  ├─ #1 Func2 step 1 [51.119917ms ( 51.119917ms total)]
-   │  │  └─ #2 Func2 step 2 [51.095666ms (102.215583ms total)]
-   │  └─ #3 Func1 step 2 [51.070458ms (204.339041ms total)]
-   └─ #3 Step 2 [51.074333ms (305.816375ms total)]
-```
-
-Screenshot with colors:
-
-![screenshot with colors](https://raw.githubusercontent.com/nekomeowww/elapsing/main/docs/screenshots-01.png)

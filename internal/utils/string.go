@@ -1,31 +1,15 @@
 package utils
 
 import (
-	"golang.org/x/text/width"
+	runewidth "github.com/mattn/go-runewidth"
 )
-
-func StringWidth(s string) int {
-	size := 0
-	for _, runeValue := range s {
-		p := width.LookupRune(runeValue)
-		if p.Kind() == width.EastAsianWide {
-			size += 2
-			continue
-		}
-		if p.Kind() == width.EastAsianNarrow {
-			size += 1
-			continue
-		}
-	}
-
-	return size
-}
 
 func StringsMaxLength(ss []string) int {
 	max := 0
 	for _, s := range ss {
-		if StringWidth(s) > max {
-			max = StringWidth(s) + 1
+		stringWidth := runewidth.StringWidth(s)
+		if stringWidth > max {
+			max = stringWidth + 1
 		}
 	}
 
@@ -33,11 +17,12 @@ func StringsMaxLength(ss []string) int {
 }
 
 func StringPadStart(s string, length int) string {
-	if StringWidth(s) >= length {
+	stringWidth := runewidth.StringWidth(s)
+	if stringWidth >= length {
 		return s
 	}
 
-	paddingLength := length - int(StringWidth(s))
+	paddingLength := length - int(stringWidth)
 	padding := ""
 	for i := 0; i < paddingLength; i++ {
 		padding += " "
@@ -47,11 +32,12 @@ func StringPadStart(s string, length int) string {
 }
 
 func StringPadEnd(s string, length int) string {
-	if StringWidth(s) >= length {
+	stringWidth := runewidth.StringWidth(s)
+	if stringWidth >= length {
 		return s
 	}
 
-	paddingLength := length - int(StringWidth(s))
+	paddingLength := length - int(stringWidth)
 	padding := ""
 	for i := 0; i < paddingLength; i++ {
 		padding += " "
