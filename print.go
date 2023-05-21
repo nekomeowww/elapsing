@@ -20,16 +20,13 @@ func alterRenderedResultWithColor(renderResult string, style *list.Style, color 
 }
 
 const (
-	defaultSingleLineFormat = "%%s %%s %s%%v %s%%v %s%s%s"
+	defaultSingleLineFormat = "%%s %%s %s%%v%s"
 )
 
 var (
 	// format of [%s ( %s total)]
 	singleLineFormat = fmt.Sprintf(defaultSingleLineFormat,
 		color.FgGray.Render("["),
-		color.FgGray.Render("("),
-		color.FgGray.Render("total"),
-		color.FgGray.Render(")"),
 		color.FgGray.Render("]"),
 	)
 )
@@ -53,7 +50,7 @@ func (e *Elapsing) appendStatsDataToList(list list.Writer, parentIndex int) {
 	indexes, indexesMaxLength := e.steps.Indexes()
 	names, namesMaxLength := e.steps.Names()
 	lasts, lastsMaxLength := e.steps.Lasts()
-	totals, totalsMaxLength := e.steps.Totals()
+	// totals, totalsMaxLength := e.steps.Totals()
 
 	for i := range indexes {
 		if e.steps[i].Type() == StepTypeElapsing {
@@ -65,7 +62,6 @@ func (e *Elapsing) appendStatsDataToList(list list.Writer, parentIndex int) {
 			color.FgGray.Render(fmt.Sprintf("#%s", utils.StringPadStart(indexes[i], indexesMaxLength))),
 			color.FgYellow.Render(utils.StringPadEnd(names[i], namesMaxLength)),
 			color.FgGreen.Render(utils.StringPadStart(lasts[i], lastsMaxLength)),
-			color.FgGray.Render(utils.StringPadStart(totals[i], totalsMaxLength)),
 		))
 	}
 
